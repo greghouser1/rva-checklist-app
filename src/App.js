@@ -126,36 +126,12 @@ const CircleIcon = ({ className }) => ( <svg className={className} xmlns="http:/
 const PencilIcon = ({ className }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg> );
 const XIcon = ({ className }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> );
 const MapPinIcon = ({ className }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> );
-const PieChartIcon = ({ className }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg> );
 const SparklesIcon = ({ className }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg> );
 const StarIcon = ({ className, solid }) => ( <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill={solid ? "currentColor" : "none"} stroke="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg> );
 
 const StarRating = ({ rating, setRating }) => {
     const [hoverRating, setHoverRating] = useState(0);
     return ( <div className="flex items-center space-x-1">{[1, 2, 3, 4, 5].map((star) => (<button key={star} onClick={() => setRating(star)} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} className="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500"><StarIcon className={`h-8 w-8 transition-colors ${(hoverRating || rating) >= star ? 'text-amber-400' : 'text-gray-300'}`} solid={(hoverRating || rating) >= star} /></button>))}</div> );
-};
-
-const AnalyticsChart = ({ restaurants }) => {
-    const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = window.Recharts;
-    const cuisineData = useMemo(() => {
-        const visited = restaurants.filter(r => r.visited);
-        const counts = visited.reduce((acc, r) => { const cuisine = r.cuisine || "Uncategorized"; acc[cuisine] = (acc[cuisine] || 0) + 1; return acc; }, {});
-        return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => a.count - b.count);
-    }, [restaurants]);
-    if (cuisineData.length === 0) { return <div className="text-center p-8 bg-white rounded-lg shadow-md mb-6"><p className="text-lg text-gray-500">Visit some restaurants to see your analytics!</p></div>; }
-    return (
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6 h-96">
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cuisineData} layout="vertical" margin={{ top: 5, right: 30, left: 100, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" allowDecimals={false} />
-                    <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 12, fill: '#4b5563' }} />
-                    <Tooltip cursor={{fill: '#f9fafb'}} contentStyle={{backgroundColor: 'white', borderRadius: '0.5rem', border: '1px solid #e5e7eb'}} />
-                    <Bar dataKey="count" name="Visits" fill="#9f1239" />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    );
 };
 
 const MapComponent = ({ restaurants, onMarkerClick }) => {
@@ -183,14 +159,17 @@ const Recommendations = ({ topCuisines }) => {
         return null;
     }
     return (
-        <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">You Might Also Like...</h2>
+        <div className="mb-8 p-6 bg-white rounded-xl shadow-sm border border-slate-200">
+            <div className="text-center mb-4">
+                <h2 className="text-2xl font-bold text-slate-800">You Might Also Like...</h2>
+                <p className="text-slate-500 mt-1">Based on your ratings, here are some other popular Richmond spots <span className="font-semibold">(not on the RTD 100 list)</span> you may enjoy.</p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {topCuisines.map(cuisine => {
                     const recommendation = recommendationData[cuisine];
                     if (!recommendation) return null;
                     return (
-                        <div key={cuisine} className="bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                        <div key={cuisine} className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                             <p className="text-sm font-semibold text-rose-800">Because you like {cuisine}</p>
                             <h3 className="text-xl font-bold text-slate-900 mt-1">{recommendation.name}</h3>
                             <p className="text-slate-600 mt-2">{recommendation.blurb}</p>
@@ -212,16 +191,14 @@ export default function App() {
     const [rating, setRating] = useState(0);
     const [visitedDate, setVisitedDate] = useState('');
     const [mapVisible, setMapVisible] = useState(false);
-    const [analyticsVisible, setAnalyticsVisible] = useState(false);
     const [recsVisible, setRecsVisible] = useState(false);
-    const [scriptsLoaded, setScriptsLoaded] = useState({ leaflet: false, recharts: false });
+    const [scriptsLoaded, setScriptsLoaded] = useState({ leaflet: false });
 
     useEffect(() => {
         const fontLink = document.createElement('link'); fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'; fontLink.rel = 'stylesheet'; document.head.appendChild(fontLink);
         const leafletLink = document.createElement('link'); leafletLink.rel = 'stylesheet'; leafletLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(leafletLink);
         const leafletScript = document.createElement('script'); leafletScript.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; leafletScript.onload = () => setScriptsLoaded(prev => ({...prev, leaflet: true })); document.body.appendChild(leafletScript);
-        const rechartsScript = document.createElement('script'); rechartsScript.src = 'https://unpkg.com/recharts/umd/Recharts.min.js'; rechartsScript.onload = () => setScriptsLoaded(prev => ({...prev, recharts: true })); document.body.appendChild(rechartsScript);
-        return () => { document.head.removeChild(fontLink); document.head.removeChild(leafletLink); document.body.removeChild(leafletScript); document.body.removeChild(rechartsScript); }
+        return () => { document.head.removeChild(fontLink); document.head.removeChild(leafletLink); document.body.removeChild(leafletScript); }
     }, []);
 
     useEffect(() => {
@@ -289,18 +266,14 @@ export default function App() {
                         <div className="w-full sm:w-2/3">
                             <input type="text" placeholder="Search for a restaurant..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-3 text-lg border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition"/>
                         </div>
-                        <div className="w-full sm:w-1/3 grid grid-cols-2 gap-4">
+                        <div className="w-full sm:w-1/3 grid grid-cols-1">
                             <button onClick={() => setMapVisible(prev => !prev)} disabled={!scriptsLoaded.leaflet} className="flex items-center justify-center p-3 bg-slate-800 text-white font-semibold rounded-xl shadow-sm hover:bg-slate-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
                                 <MapPinIcon className="h-5 w-5 sm:mr-2" />
-                                <span className="hidden sm:inline">{mapVisible ? 'Hide' : 'Map'}</span>
-                            </button>
-                            <button onClick={() => setAnalyticsVisible(prev => !prev)} disabled={!scriptsLoaded.recharts} className="flex items-center justify-center p-3 bg-slate-800 text-white font-semibold rounded-xl shadow-sm hover:bg-slate-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
-                                <PieChartIcon className="h-5 w-5 sm:mr-2" />
-                                <span className="hidden sm:inline">{analyticsVisible ? 'Hide' : 'Stats'}</span>
+                                <span className="hidden sm:inline">{mapVisible ? 'Hide Map' : 'Show Map'}</span>
                             </button>
                         </div>
                     </div>
-                    <div className="mt-6 text-center">
+                     <div className="mt-6 text-center">
                          <button onClick={() => setRecsVisible(prev => !prev)} disabled={topCuisines.length === 0} className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-xl shadow-sm hover:bg-amber-600 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
                             <SparklesIcon className="h-5 w-5 mr-2" />
                             <span>{recsVisible ? 'Hide Recommendations' : 'Get Recommendations'}</span>
@@ -318,7 +291,6 @@ export default function App() {
                 </div>
 
                 {mapVisible && scriptsLoaded.leaflet && <MapComponent restaurants={restaurants} onMarkerClick={handleMarkerClick}/>}
-                {analyticsVisible && scriptsLoaded.recharts && <AnalyticsChart restaurants={restaurants} />}
                 {recsVisible && <Recommendations topCuisines={topCuisines} />}
 
                 <div className="space-y-4">
