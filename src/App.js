@@ -104,20 +104,22 @@ const StarRating = ({ rating, setRating }) => {
 // --- Map Component ---
 const MapComponent = ({ restaurants, onMarkerClick }) => {
     useEffect(() => {
-        if (typeof L === 'undefined') return;
-        const map = L.map('map').setView([37.55, -77.45], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
-        const markers = L.featureGroup().addTo(map);
+        // FIX: Check for window.L instead of L to avoid build errors.
+        if (typeof window.L === 'undefined') return;
+        const map = window.L.map('map').setView([37.55, -77.45], 13);
+        window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }).addTo(map);
+        const markers = window.L.featureGroup().addTo(map);
 
         restaurants.forEach(r => {
             if (r.lat && r.lng) {
-                const customIcon = L.divIcon({
+                // FIX: Use window.L for Leaflet functions
+                const customIcon = window.L.divIcon({
                     className: 'custom-div-icon',
                     html: `<div class='marker-pin ${r.visited ? "visited" : ""}'></div><div class='marker-number'>${r.id}</div>`,
                     iconSize: [30, 42],
                     iconAnchor: [15, 42]
                 });
-                const marker = L.marker([r.lat, r.lng], { icon: customIcon });
+                const marker = window.L.marker([r.lat, r.lng], { icon: customIcon });
                 marker.bindPopup(`<b>${r.id}. ${r.name}</b>`).on('click', () => onMarkerClick(r));
                 markers.addLayer(marker);
             }
