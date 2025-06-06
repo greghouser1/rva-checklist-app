@@ -180,11 +180,7 @@ const MapComponent = ({ restaurants, onMarkerClick }) => {
 
 const Recommendations = ({ topCuisines }) => {
     if (!topCuisines || topCuisines.length === 0) {
-        return (
-            <div className="text-center p-8 bg-white rounded-lg shadow-md mb-6">
-                <p className="text-lg text-gray-500">Rate at least 3 restaurants with 4+ stars to get personalized recommendations!</p>
-            </div>
-        );
+        return null;
     }
     return (
         <div className="mb-8">
@@ -290,10 +286,10 @@ export default function App() {
                 </header>
                 <div className="sticky top-0 bg-slate-50/80 backdrop-blur-sm z-20 py-5 mb-8">
                     <div className="flex flex-col sm:flex-row gap-4 items-center">
-                        <div className="w-full sm:w-1/2">
+                        <div className="w-full sm:w-2/3">
                             <input type="text" placeholder="Search for a restaurant..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-3 text-lg border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition"/>
                         </div>
-                        <div className="w-full sm:w-1/2 grid grid-cols-3 gap-4">
+                        <div className="w-full sm:w-1/3 grid grid-cols-2 gap-4">
                             <button onClick={() => setMapVisible(prev => !prev)} disabled={!scriptsLoaded.leaflet} className="flex items-center justify-center p-3 bg-slate-800 text-white font-semibold rounded-xl shadow-sm hover:bg-slate-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
                                 <MapPinIcon className="h-5 w-5 sm:mr-2" />
                                 <span className="hidden sm:inline">{mapVisible ? 'Hide' : 'Map'}</span>
@@ -302,11 +298,18 @@ export default function App() {
                                 <PieChartIcon className="h-5 w-5 sm:mr-2" />
                                 <span className="hidden sm:inline">{analyticsVisible ? 'Hide' : 'Stats'}</span>
                             </button>
-                            <button onClick={() => setRecsVisible(prev => !prev)} disabled={topCuisines.length === 0} className="flex items-center justify-center p-3 bg-slate-800 text-white font-semibold rounded-xl shadow-sm hover:bg-slate-700 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
-                                <SparklesIcon className="h-5 w-5 sm:mr-2" />
-                                <span className="hidden sm:inline">{recsVisible ? 'Hide' : 'Recs'}</span>
-                            </button>
                         </div>
+                    </div>
+                    <div className="mt-6 text-center">
+                         <button onClick={() => setRecsVisible(prev => !prev)} disabled={topCuisines.length === 0} className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-xl shadow-sm hover:bg-amber-600 transition disabled:bg-slate-400 disabled:cursor-not-allowed">
+                            <SparklesIcon className="h-5 w-5 mr-2" />
+                            <span>{recsVisible ? 'Hide Recommendations' : 'Get Recommendations'}</span>
+                        </button>
+                        {topCuisines.length === 0 && (
+                            <p className="text-sm text-slate-500 mt-2 animate-pulse">
+                                ⭐ Rate 3 restaurants 4+ stars to unlock personalized recommendations!
+                            </p>
+                        )}
                     </div>
                     <div className="mt-6">
                         <div className="flex justify-between mb-1 text-slate-600"><span className="text-base font-medium">Progress</span><span className="text-sm font-medium">{visitedCount} of {restaurants.length} Visited</span></div>
